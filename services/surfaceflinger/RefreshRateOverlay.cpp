@@ -70,7 +70,7 @@ auto RefreshRateOverlay::draw(int refreshRate, int renderFps, bool idle, SkColor
 
         int left = 0;
         if (idle && !isSetByHwc) {
-            drawDash(left, *canvas);
+            drawNumber(1, left, color, *canvas);
         } else {
             drawNumber(refreshRate, left, color, *canvas);
         }
@@ -107,7 +107,7 @@ auto RefreshRateOverlay::draw(int refreshRate, int renderFps, bool idle, SkColor
 
         if (features.test(Features::RenderRate)) {
             if (idle) {
-                drawDash(left, *canvas);
+                drawNumber(1, left, color, *canvas);
             } else {
                 drawNumber(renderFps, left, color, *canvas);
             }
@@ -230,8 +230,8 @@ auto RefreshRateOverlay::getOrCreateBuffers(Fps refreshRate, Fps renderFps, bool
 
         // Clamp to supported refresh rate range: the current refresh rate may be outside of this
         // range if the display has changed its set of supported refresh rates.
-        const int refreshIntFps = std::clamp(refreshRate.getIntValue(), 0, maxFps);
-        const int renderIntFps = renderFps.getIntValue();
+        const int refreshIntFps = idle ? 1 : std::clamp(refreshRate.getIntValue(), 0, maxFps);
+        const int renderIntFps = idle ? 1 : renderFps.getIntValue();
         const float fpsScale = static_cast<float>(refreshIntFps) / maxFps;
 
         constexpr SkColor kMinFpsColor = SK_ColorRED;
